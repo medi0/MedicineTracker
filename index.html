@@ -1,0 +1,43 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicine Tracker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1 >My Medicine Tracker</h1>
+    </header>
+    
+    <main>
+        <section class="add-medicine">
+            <h2>Add New Medicine</h2>
+            <form id="medicine-form">
+                <input type="text" id="medicine-name" name="medicine-name" placeholder="Medicine Name" required>
+                <input type="text" id="dosage" name="dosage" placeholder="Dosage (e.g., 2 tablets)" required>
+                
+                <select id="frequency" name="fre" required>
+                    <option value="">Select Frequency</option>
+                    <option value="once">Once daily</option>
+                    <option value="twice">Twice daily</option>
+                    <option value="thrice">Three times daily</option>
+                </select>
+                <p margin-top: "5px"></p>
+                <button type="submit">Add Medicine</button>
+            </form>
+        </section>
+        
+        <section class="medicine-list">
+            <h2>My Medicines</h2>
+            <div id="medicines-container">
+                <!-- Medicines will appear here -->
+            </div>
+        </section>
+    </main>
+    
+    <script src="script.js"></script>
+</body>
+</html>
