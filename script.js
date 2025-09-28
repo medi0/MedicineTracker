@@ -2,11 +2,43 @@ class MedicineTracker {
     constructor() {
         this.medicines = [];
         this.nextId = 1;
+        this.loadFromStorage();
         this.init();
     }
-    
+    saveToStorage() {
+    try {
+        localStorage.setItem('medicines', JSON.stringify(this.medicines));
+        localStorage.setItem('nextId', this.nextId.toString());
+        console.log('Data saved to storage');
+    } catch (error) {
+        console.error('Error saving to storage:', error);
+    }
+}
+
+loadFromStorage() {
+    try {
+        const savedMedicines = localStorage.getItem('medicines');
+        const savedNextId = localStorage.getItem('nextId');
+        
+        if (savedMedicines) {
+            this.medicines = JSON.parse(savedMedicines);
+        }
+        
+        if (savedNextId) {
+            this.nextId = parseInt(savedNextId);
+        }
+        
+        console.log('Data loaded from storage');
+    } catch (error) {
+        console.error('Error loading from storage:', error);
+        this.medicines = [];
+        this.nextId = 1;
+    }
+}
+
     init() {
         this.bindEvents();
+        this.renderMedicines(); // render saved medicines
         console.log('Medicine Tracker initialized');
     }
     
@@ -45,11 +77,13 @@ class MedicineTracker {
     
     addMedicine(medicine) {
         this.medicines.push(medicine);
+        this.saveToStorage();
         console.log('Medicine added:', medicine);
     }
     
     removeMedicine(id) {
         this.medicines = this.medicines.filter(med => med.id !== id);
+        this.saveToStorage();
         this.renderMedicines();
     }
     
