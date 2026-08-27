@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Medicine Tracker</string>
+    <string name="title_activity_main">Medicine Tracker</string>
+    <string name="package_name">com.medicinetracker.app</string>
+    <string name="custom_url_scheme">com.medicinetracker.app</string>
+</resources>

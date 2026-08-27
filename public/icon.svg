@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Medicine Tracker">
+  <rect width="128" height="128" rx="24" fill="#1a1a1a"/>
+  <rect x="52" y="28" width="24" height="72" rx="6" fill="#4dabf7"/>
+  <rect x="28" y="52" width="72" height="24" rx="6" fill="#4dabf7"/>
+</svg>

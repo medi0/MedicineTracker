@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#1a1a1a">
+    <meta name="description" content="Personal medicine reminder and dose tracker. Not medical advice.">
+    <link rel="manifest" href="./manifest.webmanifest">
+    <link rel="icon" href="./icon.svg" type="image/svg+xml">
+    <title>Medicine Tracker</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <header class="app-header">
+        <h1>Medicine Tracker</h1>
+        <p id="adherence-summary" class="adherence-summary">Add medicines to start tracking adherence.</p>
+        <button type="button" id="notify-btn" class="notify-btn">Enable reminders</button>
+    </header>
+
+    <nav class="tab-nav" aria-label="Main">
+        <button type="button" class="tab-btn active" data-tab="today">Today</button>
+        <button type="button" class="tab-btn" data-tab="medicines">Medicines</button>
+        <button type="button" class="tab-btn" data-tab="calendar">Calendar</button>
+        <button type="button" class="tab-btn" data-tab="reports">Reports</button>
+    </nav>
+
+    <main>
+        <section id="tab-today" class="tab-panel active">
+            <div class="panel-card today-view">
+                <h2>Today</h2>
+                <p class="section-hint">Doses due today. Tap to mark taken, skip, or snooze.</p>
+                <div id="refill-alerts" class="refill-alerts" hidden></div>
+                <div id="today-container"></div>
+            </div>
+        </section>
+
+        <section id="tab-medicines" class="tab-panel">
+            <div class="panel-card add-medicine">
+                <h2 id="form-heading">Add Medicine</h2>
+                <form id="medicine-form">
+                    <label class="field-label" for="medicine-name">Name</label>
+                    <input type="text" id="medicine-name" name="medicine-name" placeholder="e.g. Aspirin" required>
+
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label class="field-label" for="strength">Strength</label>
+                            <input type="text" id="strength" name="strength" placeholder="e.g. 500">
+                        </div>
+                        <div class="field-group">
+                            <label class="field-label" for="unit">Unit</label>
+                            <select id="unit" name="unit">
+                                <option value="mg">mg</option>
+                                <option value="mcg">mcg</option>
+                                <option value="g">g</option>
+                                <option value="ml">ml</option>
+                                <option value="IU">IU</option>
+                                <option value="tablet">tablet(s)</option>
+                                <option value="capsule">capsule(s)</option>
+                                <option value="drop">drop(s)</option>
+                                <option value="other">other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <label class="field-label" for="dosage">Dose amount</label>
+                    <input type="text" id="dosage" name="dosage" placeholder="e.g. 1 tablet" required>
+
+                    <label class="field-label" for="schedule-type">Schedule type</label>
+                    <select id="schedule-type" name="schedule-type" required>
+                        <option value="daily">Every day</option>
+                        <option value="weekdays">Specific weekdays</option>
+                        <option value="everyN">Every N days</option>
+                        <option value="prn">As needed (PRN)</option>
+                    </select>
+
+                    <fieldset id="weekdays-fieldset" class="weekdays-fieldset" hidden>
+                        <legend>Days of week</legend>
+                        <div class="weekday-checks">
+                            <label><input type="checkbox" class="weekday-cb" value="0"> Sun</label>
+                            <label><input type="checkbox" class="weekday-cb" value="1"> Mon</label>
+                            <label><input type="checkbox" class="weekday-cb" value="2"> Tue</label>
+                            <label><input type="checkbox" class="weekday-cb" value="3"> Wed</label>
+                            <label><input type="checkbox" class="weekday-cb" value="4"> Thu</label>
+                            <label><input type="checkbox" class="weekday-cb" value="5"> Fri</label>
+                            <label><input type="checkbox" class="weekday-cb" value="6"> Sat</label>
+                        </div>
+                    </fieldset>
+
+                    <div id="every-n-row" class="field-row" hidden>
+                        <div class="field-group">
+                            <label class="field-label" for="every-n-days">Every N days</label>
+                            <input type="number" id="every-n-days" name="every-n-days" min="2" max="90" value="2">
+                        </div>
+                    </div>
+
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label class="field-label" for="start-date">Course start</label>
+                            <input type="date" id="start-date" name="start-date">
+                        </div>
+                        <div class="field-group">
+                            <label class="field-label" for="end-date">Course end</label>
+                            <input type="date" id="end-date" name="end-date">
+                        </div>
+                    </div>
+
+                    <div id="frequency-group">
+                        <label class="field-label" for="frequency">Frequency</label>
+                        <select id="frequency" name="frequency" required>
+                        <option value="">Select frequency</option>
+                        <option value="once">Once daily</option>
+                        <option value="twice">Twice daily</option>
+                        <option value="thrice">Three times daily</option>
+                        </select>
+                    </div>
+
+                    <fieldset id="times-fieldset" class="times-fieldset">
+                        <legend>Dose times</legend>
+                        <p class="section-hint">Defaults: morning / noon / night. Adjust as needed.</p>
+                        <div id="times-fields" class="times-fields"></div>
+                    </fieldset>
+
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label class="field-label" for="pill-count">Pill count</label>
+                            <input type="number" id="pill-count" name="pill-count" min="0" step="1" placeholder="e.g. 30">
+                        </div>
+                        <div class="field-group">
+                            <label class="field-label" for="refill-at">Refill at</label>
+                            <input type="number" id="refill-at" name="refill-at" min="0" step="1" placeholder="e.g. 7">
+                        </div>
+                    </div>
+
+                    <label class="field-label" for="expiry-date">Expiry date</label>
+                    <input type="date" id="expiry-date" name="expiry-date">
+
+                    <label class="field-label" for="rx-info">Rx / notes</label>
+                    <textarea id="rx-info" name="rx-info" rows="2" placeholder="Prescriber, instructions, etc."></textarea>
+
+                    <div class="form-actions">
+                        <button type="submit" id="submit-btn">Add Medicine</button>
+                        <button type="button" id="cancel-edit-btn" class="cancel-btn" hidden>Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="panel-card medicine-list">
+                <h2>My Medicines</h2>
+                <div class="list-controls">
+                    <input type="search" id="search-input" placeholder="Search by name…" aria-label="Search medicines">
+                    <select id="sort-select" aria-label="Sort medicines">
+                        <option value="name-asc">Name A–Z</option>
+                        <option value="name-desc">Name Z–A</option>
+                        <option value="date-desc">Newest first</option>
+                        <option value="date-asc">Oldest first</option>
+                        <option value="expiry-asc">Expiry soonest</option>
+                    </select>
+                </div>
+                <div id="medicines-container"></div>
+                <div class="management-buttons">
+                    <button type="button" id="export-btn" class="export-btn">Export</button>
+                    <label class="import-btn">
+                        Import (replace)
+                        <input type="file" id="import-input" accept="application/json,.json" hidden>
+                    </label>
+                    <label class="import-btn merge-import-btn">
+                        Merge import
+                        <input type="file" id="merge-import-input" accept="application/json,.json" hidden>
+                    </label>
+                    <button type="button" id="clear-btn" class="clear-btn">Clear All</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-calendar" class="tab-panel">
+            <div class="panel-card calendar-view">
+                <div class="calendar-header">
+                    <button type="button" id="cal-prev" class="icon-btn" aria-label="Previous month">‹</button>
+                    <h2 id="cal-title">Calendar</h2>
+                    <button type="button" id="cal-next" class="icon-btn" aria-label="Next month">›</button>
+                </div>
+                <div class="cal-weekdays" aria-hidden="true">
+                    <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                </div>
+                <div id="calendar-grid" class="calendar-grid"></div>
+                <div id="calendar-day-detail" class="calendar-day-detail"></div>
+            </div>
+        </section>
+
+        <section id="tab-reports" class="tab-panel">
+            <div class="panel-card reports-view">
+                <h2>Reports</h2>
+                <p class="section-hint">Last 14 days adherence (all medicines).</p>
+                <div id="chart-container" class="chart-container" role="img" aria-label="Adherence bar chart"></div>
+                <p id="reports-summary" class="reports-summary"></p>
+                <h3 class="reports-subheading">Per medicine (14 days)</h3>
+                <div id="per-med-reports" class="per-med-reports"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <p>Personal reminder tool — not medical advice. Data stays on this device.</p>
+    </footer>
+
+    <script type="module" src="./script.js"></script>
+</body>
+</html>
